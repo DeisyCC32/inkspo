@@ -1011,6 +1011,7 @@
             @if($order->reference_image)
 
                 <img
+                
                     src="{{ asset('storage/'.$order->reference_image) }}"
                     style="
                         width:100%;
@@ -1027,6 +1028,8 @@
                 <p>No reference image</p>
 
             @endif
+
+            @if($order->status == 'pending')
 
             <div style="display:flex;gap:10px;">
 
@@ -1077,6 +1080,8 @@
                 </form>
 
             </div>
+
+            @endif
 
         @empty
 
