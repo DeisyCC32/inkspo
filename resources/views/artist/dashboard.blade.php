@@ -446,7 +446,7 @@
                     <p
                         style="
                             color:#000500;
-                            font-weight:700;
+                            font-weight:200;
                             margin-bottom:10px;
                         ">
                         Reference
@@ -458,7 +458,7 @@
                             src="{{ asset('storage/'.$order->reference_image) }}"
                             style="
                                 width:100%;
-                                max-height:300px;
+                                max-height:500px;
                                 object-fit:contain;
                                 background:#f1f5f9;
                                 border-radius:20px;
@@ -481,7 +481,7 @@
                             src="{{ asset('storage/'.$order->result_image) }}"
                             style="
                                 width:100%;
-                                max-height:300px;
+                                max-height:600px;
                                 object-fit:contain;
                                 background:#f1f5f9;
                                 border-radius:20px;
@@ -744,7 +744,7 @@
                             src="{{ asset('storage/'.$order->reference_image) }}"
                             style="
                                 width:100%;
-                                max-height:300px;
+                                max-height:700px;
                                 object-fit:contain;
                                 background:#f1f5f9;
                                 border-radius:20px;
@@ -831,16 +831,16 @@
 
         @forelse($latestQueueOrders as $order)
 
-            <div
-                style="
-                    background:#f8fafc;
-                    padding:30px;
-                    border-radius:25px;
-                    box-shadow:0 5px 20px rgba(0,0,0,.08);
-                    width:100%;
-                    min-width:0;
-                    overflow:hidden;
-                ">
+        <div
+            style="
+                background:#f8fafc;
+                padding:30px;
+                border-radius:25px;
+                box-shadow:0 5px 20px rgba(0,0,0,.08);
+                width:100%;
+                min-width:0;
+                overflow:hidden;
+            ">
 
             <div
                 style="
@@ -891,10 +891,10 @@
                     gap:50px;
                     flex-wrap:wrap;
                     margin-bottom:25px;
-                "
-            >
+                ">
 
                 <div>
+
                     <p
                         style="
                             color:#000500;
@@ -920,8 +920,7 @@
                                 display:inline-block;
                                 font-weight:800;
                                 margin-top:10px;
-                            "
-                        >
+                            ">
                             Waiting Payment
                         </div>
 
@@ -938,17 +937,16 @@
                                 display:inline-block;
                                 font-weight:800;
                                 margin-top:10px;
-                            "
-                        >
+                            ">
                             Pending
                         </div>
 
                     @endif
 
-                    
                 </div>
 
                 <div>
+
                     <p
                         style="
                             color:#000500;
@@ -962,9 +960,11 @@
                     <p style="margin:0;">
                         Rp {{ number_format($order->service->price,0,',','.') }}
                     </p>
+
                 </div>
 
                 <div>
+
                     <p
                         style="
                             color:#000500;
@@ -978,6 +978,7 @@
                     <p style="margin:0;">
                         {{ $order->due_date ?? '-' }}
                     </p>
+
                 </div>
 
             </div>
@@ -1011,11 +1012,10 @@
             @if($order->reference_image)
 
                 <img
-                
                     src="{{ asset('storage/'.$order->reference_image) }}"
                     style="
                         width:100%;
-                        max-height:550px;
+                        height:600px;
                         object-fit:contain;
                         border-radius:20px;
                         margin-bottom:20px;
@@ -1031,69 +1031,76 @@
 
             @if($order->status == 'pending')
 
-            <div style="display:flex;gap:10px;">
+                <div
+                    style="
+                        display:flex;
+                        gap:10px;
+                        margin-top:10px;
+                    ">
 
-                <form
-                    action="{{ route('orders.accept',$order->id) }}"
-                    method="POST">
+                    <form
+                        action="{{ route('orders.accept',$order->id) }}"
+                        method="POST">
 
-                    @csrf
-                    @method('PATCH')
+                        @csrf
+                        @method('PATCH')
 
-                    <button
-                        type="submit"
-                        style="
-                            background:#ffffff;
-                            color:#000500;
-                            border:3px solid #000500;
-                            border-radius:15px;
-                            padding:10px 25px;
-                            font-weight:800;
-                            cursor:pointer;
-                        ">
-                        Accept
-                    </button>
+                        <button
+                            type="submit"
+                            style="
+                                background:#ffffff;
+                                color:#000500;
+                                border:3px solid #000500;
+                                border-radius:15px;
+                                padding:10px 25px;
+                                font-weight:800;
+                                cursor:pointer;
+                            ">
+                            Accept
+                        </button>
 
-                </form>
+                    </form>
 
-                <form
-                    action="{{ route('orders.reject',$order->id) }}"
-                    method="POST">
+                    <form
+                        action="{{ route('orders.reject',$order->id) }}"
+                        method="POST">
 
-                    @csrf
-                    @method('PATCH')
+                        @csrf
+                        @method('PATCH')
 
-                    <button
-                        type="submit"
-                        style="
-                            background:#000500;
-                            color:white;
-                            border:3px solid #000500;
-                            border-radius:15px;
-                            padding:10px 25px;
-                            font-weight:800;
-                            cursor:pointer;
-                        ">
-                        Reject
-                    </button>
+                        <button
+                            type="submit"
+                            style="
+                                background:#000500;
+                                color:white;
+                                border:3px solid #000500;
+                                border-radius:15px;
+                                padding:10px 25px;
+                                font-weight:800;
+                                cursor:pointer;
+                            ">
+                            Reject
+                        </button>
 
-                </form>
+                    </form>
 
-            </div>
+                </div>
 
             @endif
 
-        @empty
+        </div>
 
-            <p style="
-                    color:#ffffff;
-                    
-                    margin-bottom:8px;
-                ">
-                Tidak ada request baru.
-            </p>
+    @empty
 
-        @endforelse
+        <p
+            style="
+                color:#ffffff;
+                margin-bottom:8px;
+            ">
+            Tidak ada request baru.
+        </p>
+
+    @endforelse
 
     </div>
 
