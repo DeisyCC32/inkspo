@@ -25,4 +25,11 @@ class Service extends Model
     {
         return $this->hasMany(Order::class);
     }
+    public function reviews()
+    {
+        return $this->hasManyThrough(
+            \App\Models\Order::class,
+            \App\Models\Service::class
+        );
+    }
 }

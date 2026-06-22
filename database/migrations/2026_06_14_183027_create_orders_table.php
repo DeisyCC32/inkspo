@@ -26,11 +26,11 @@ return new class extends Migration
                 ->onDelete('cascade');
 
             $table->enum('status', [
+                'queue',
                 'pending',
-                'in_progress',
                 'completed',
                 'cancelled'
-            ])->default('pending');
+            ])->default('queue');
 
             $table->timestamps();
         });

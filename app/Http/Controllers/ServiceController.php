@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ServiceController extends Controller
 {
     public function index()
     {
-        $services = Service::where('user_id', Auth::id())->get();
-
-        return view('services.index', compact('services'));
+        return redirect()->route('artist.dashboard');
     }
 
     public function create()
@@ -27,7 +26,17 @@ class ServiceController extends Controller
             'description' => 'required',
             'price' => 'required|numeric',
             'delivery_time' => 'required|integer',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
+
+        $imagePath = null;
+
+        if ($request->hasFile('image'))
+        {
+            $imagePath = $request
+                ->file('image')
+                ->store('services', 'public');
+        }
 
         Service::create([
             'user_id' => Auth::id(),
@@ -35,11 +44,18 @@ class ServiceController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'delivery_time' => $request->delivery_time,
+            'image' => $imagePath,
             'status' => 'active',
         ]);
 
-        return redirect()->route('services.index');
+        return redirect()
+            ->route('artist.dashboard')
+            ->with(
+                'success',
+                'Service created successfully.'
+            );
     }
+
 
     public function show(Service $service)
     {
@@ -58,17 +74,31 @@ class ServiceController extends Controller
             'description' => 'required',
             'price' => 'required|numeric',
             'delivery_time' => 'required|integer',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
+
+        $imagePath = $service->image;
+
+        if ($request->hasFile('image')) {
+
+            if ($service->image) {
+                Storage::disk('public')->delete($service->image);
+            }
+
+            $imagePath = $request->file('image')
+                ->store('services', 'public');
+        }
 
         $service->update([
             'title' => $request->title,
             'description' => $request->description,
             'price' => $request->price,
             'delivery_time' => $request->delivery_time,
+            'image' => $imagePath,
         ]);
 
         return redirect()
-            ->route('services.index')
+            ->route('artist.dashboard')
             ->with('success', 'Service berhasil diupdate');
     }
 
@@ -77,7 +107,7 @@ class ServiceController extends Controller
         $service->delete();
 
         return redirect()
-            ->route('services.index')
-            ->with('success', 'Service berhasil dihapus');
+            ->route('artist.dashboard')
+            ->with('success', 'Service deleted successfully.');
     }
 }

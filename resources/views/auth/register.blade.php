@@ -1,67 +1,190 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+<div
+    style="
+        min-height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        padding:40px 20px;
+    "
+>
+
+    <div
+        style="
+            width:100%;
+            max-width:500px;
+            background:rgba(255,255,255,.96);
+            border-radius:28px;
+            padding:40px;
+            box-shadow:0 20px 60px rgba(0,0,0,.4);
+        "
+    >
+
+        <div style="text-align:center;margin-bottom:30px;">
+
+            <img
+                src="{{ asset('images/logo.png') }}"
+                alt="Inkspo"
+                style="
+                    width:90px;
+                    margin:auto;
+                    margin-bottom:15px;
+                "
+            >
+
+            <h1
+                style="
+                    font-size:42px;
+                    font-weight:900;
+                    color:#111827;
+                    margin-bottom:10px;
+                "
+            >
+                Join Inkspo
+            </h1>
+
+            <p
+                style="
+                    color:#6b7280;
+                "
+            >
+                Temukan artist dan mulai commission artwork favoritmu.
+            </p>
+
         </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+        <form method="POST" action="{{ route('register') }}">
+            @csrf
 
-        <!-- Role -->
-        <div class="mt-4">
-            <x-input-label for="role" :value="__('Register As')" />
+            <div style="margin-bottom:15px;">
+                <label>Name</label>
 
-            <select
-                id="role"
-                name="role"
-                class="block mt-1 w-full border-gray-300 rounded-md shadow-sm">
+                <input
+                    type="text"
+                    name="name"
+                    required
+                    autofocus
+                    value="{{ old('name') }}"
+                    style="
+                        width:100%;
+                        padding:14px;
+                        border:1px solid #d1d5db;
+                        border-radius:12px;
+                        margin-top:5px;
+                    "
+                >
+            </div>
 
-                <option value="customer">Customer</option>
-                <option value="artist">Artist</option>
+            <div style="margin-bottom:15px;">
+                <label>Email</label>
 
-            </select>
-        </div>
-        
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+                <input
+                    type="email"
+                    name="email"
+                    required
+                    value="{{ old('email') }}"
+                    style="
+                        width:100%;
+                        padding:14px;
+                        border:1px solid #d1d5db;
+                        border-radius:12px;
+                        margin-top:5px;
+                    "
+                >
+            </div>
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
+            <div style="margin-bottom:15px;">
+                <label>Register As</label>
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+                <select
+                    name="role"
+                    style="
+                        width:100%;
+                        padding:14px;
+                        border:1px solid #d1d5db;
+                        border-radius:12px;
+                        margin-top:5px;
+                    "
+                >
+                    <option value="customer">Customer</option>
+                    <option value="artist">Artist</option>
+                </select>
+            </div>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+            <div style="margin-bottom:15px;">
+                <label>Password</label>
 
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
+                <input
+                    type="password"
+                    name="password"
+                    required
+                    style="
+                        width:100%;
+                        padding:14px;
+                        border:1px solid #d1d5db;
+                        border-radius:12px;
+                        margin-top:5px;
+                    "
+                >
+            </div>
 
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
+            <div style="margin-bottom:25px;">
+                <label>Confirm Password</label>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
+                <input
+                    type="password"
+                    name="password_confirmation"
+                    required
+                    style="
+                        width:100%;
+                        padding:14px;
+                        border:1px solid #d1d5db;
+                        border-radius:12px;
+                        margin-top:5px;
+                    "
+                >
+            </div>
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
+            <button
+                type="submit"
+                style="
+                    width:100%;
+                    background:#0f172a;
+                    color:white;
+                    border:none;
+                    border-radius:12px;
+                    padding:16px;
+                    font-weight:bold;
+                    cursor:pointer;
+                "
+            >
+                Create Account
+            </button>
+
+            <div
+                style="
+                    text-align:center;
+                    margin-top:20px;
+                "
+            >
+                Sudah punya akun?
+
+                <a
+                    href="{{ route('login') }}"
+                    style="
+                        color:#0f172a;
+                        font-weight:bold;
+                    "
+                >
+                    Login
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
 </x-guest-layout>

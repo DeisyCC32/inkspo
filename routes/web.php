@@ -8,13 +8,17 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ArtistOrderController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get(
+    '/',
+    [MarketplaceController::class, 'index']
+)->middleware('auth')
+ ->name('home');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get(
+    '/dashboard',
+    [ArtistDashboardController::class, 'index']
+)->middleware(['auth', 'verified'])
+ ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -23,7 +27,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/artist/dashboard', [ArtistDashboardController::class, 'index'])
-    ->middleware(['auth'])
+    ->middleware(['auth', 'artist'])
     ->name('artist.dashboard');
 
 Route::resource('services', ServiceController::class)
@@ -38,7 +42,7 @@ Route::post('/services/{service}/order', [OrderController::class, 'store'])
     ->name('orders.store');
 
 Route::get('/artist/orders', [ArtistOrderController::class, 'index'])
-    ->middleware('auth')
+    ->middleware('auth','artist')
     ->name('artist.orders');
 
 Route::get('/services/{service}/request', [OrderController::class, 'create'])
@@ -57,3 +61,24 @@ Route::get('/my-orders', [OrderController::class, 'myOrders'])
     ->middleware('auth')
     ->name('orders.my');
 require __DIR__.'/auth.php';
+
+Route::get(
+    '/artist/{user}',
+    [ArtistDashboardController::class, 'profile']
+)->name('artist.profile');
+
+Route::post(
+    '/artist/orders/{order}/upload-result',
+    [ArtistOrderController::class, 'uploadResult']
+)->name('orders.uploadResult', 'artist');
+
+Route::post(
+    '/orders/{order}/review',
+    [OrderController::class, 'submitReview']
+)->middleware('auth')
+ ->name('orders.review');
+
+ Route::patch(
+    '/orders/{order}/pay',
+    [OrderController::class,'pay']
+)->name('orders.pay');

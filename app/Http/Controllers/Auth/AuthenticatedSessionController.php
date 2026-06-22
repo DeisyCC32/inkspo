@@ -28,11 +28,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        if ($request->user()->role === 'artist') {
-            return redirect('/artist/dashboard');
-    }
-
-    return redirect('/dashboard');
+        return redirect('/');
     }
 
     /**

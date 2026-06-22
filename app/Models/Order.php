@@ -12,6 +12,13 @@ class Order extends Model
         'status',
         'description',
         'reference_image',
+        'result_image',
+        'rating',
+        'review',
+        'due_date',
+        'revision_requested',
+        'revision_note',
+        'revision_count'
     ];
 
     public function customer()
