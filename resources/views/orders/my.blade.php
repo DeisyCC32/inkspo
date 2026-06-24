@@ -539,7 +539,7 @@
                             </div>
 
                         @endif
-                        @if($progress->status == 'pending')
+                        @if($latestProgress->status == 'pending')
 
                         <hr
                             style="

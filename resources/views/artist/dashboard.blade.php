@@ -491,93 +491,65 @@
                         Progress History
                     </h3>
 
-                    @foreach(
-                        $order->progresses
+                    @php
+                        $groupedProgress = $order->progresses
                             ->sortBy('created_at')
-                        as $progress
-                    )
+                            ->groupBy('phase');
+                    @endphp
 
-                    <div
+                    @foreach($groupedProgress as $phase => $phaseProgresses)
+
+                    @php
+                        $latestProgress = $phaseProgresses->last();
+                    @endphp
+
+                    <details
                         style="
                             border:1px solid #e5e7eb;
-                            border-radius:20px;
-                            padding:20px;
-                            margin-bottom:20px;
-                            background:#fafafa;
-                        ">
-
-                        <div
+                            border-radius:15px;
+                            margin-bottom:12px;
+                            overflow:hidden;
+                            background:white;
+                        "
+                    >
+                        <summary
                             style="
-                                display:flex;
-                                justify-content:space-between;
-                                align-items:center;
-                                margin-bottom:15px;
-                            ">
+                                padding:15px 18px;
+                                cursor:pointer;
+                                font-weight:700;
+                            "
+                        >
+                            {{ ucfirst($phase) }}
+                        </summary>
 
-                            <strong>
-                                {{ ucfirst($progress->phase) }}
-                            </strong>
+                        <div style="padding:15px;">
 
-                            @if($progress->status == 'pending')
+                            @foreach($phaseProgresses as $progress)
 
-                                <span
-                                    style="
-                                        color:#ca8a04;
-                                        font-weight:800;
-                                    ">
-                                    Pending Review
-                                </span>
+                                @if($progress->image)
+                                    <img
+                                        src="{{ asset('storage/'.$progress->image) }}"
+                                        style="
+                                            width:100%;
+                                            max-width:700px;
+                                            border-radius:12px;
+                                            margin-bottom:10px;
+                                        "
+                                    >
+                                @endif
 
-                            @elseif($progress->status == 'accepted')
+                                @if($progress->artist_note)
+                                    <p>
+                                        <strong>Artist Note:</strong><br>
+                                        {{ $progress->artist_note }}
+                                    </p>
+                                @endif
 
-                                <span
-                                    style="
-                                        color:#16a34a;
-                                        font-weight:800;
-                                    ">
-                                    Approved
-                                </span>
-
-                            @else
-
-                                <span
-                                    style="
-                                        color:#dc2626;
-                                        font-weight:800;
-                                    ">
-                                    Revision Requested
-                                </span>
-
-                            @endif
+                            @endforeach
 
                         </div>
 
-                        <img
-                            src="{{ asset('storage/'.$progress->image) }}"
-                            style="
-                                width:100%;
-                                max-width:700px;
-                                max-height:450px;
-                                object-fit:contain;
-                                border-radius:15px;
-                                background:#fff;
-                                border:1px solid #ddd;
-                                margin-bottom:15px;
-                            ">
-
-                        @if($progress->artist_note)
-
-                            <p>
-                                <strong>Artist Note:</strong>
-                            </p>
-
-                            <p>
-                                {{ $progress->artist_note }}
-                            </p>
-
-                        @endif
-
-                    </div>
+                    </details>
 
                     @endforeach
 
@@ -1087,15 +1059,14 @@
 
         @if($order->progresses->count())
 
-        <hr style="margin:20px 0;">
+        <hr style="margin:30px 0;">
 
         <h3
             style="
-                font-size:22px;
+                font-size:24px;
                 font-weight:900;
                 margin-bottom:20px;
-            "
-        >
+            ">
             Progress History
         </h3>
 
@@ -1108,111 +1079,148 @@
 
         @foreach($groupedProgress as $phase => $phaseProgresses)
 
-        <details
+        <div
             style="
                 border:1px solid #e5e7eb;
                 border-radius:15px;
                 margin-bottom:15px;
                 overflow:hidden;
+                background:white;
             "
         >
-            <summary
+
+            <div
+                onclick="
+                    const box =
+                    document.getElementById('artistPhase{{ $order->id }}{{ $phase }}');
+
+                    const arrow =
+                    document.getElementById('artistArrow{{ $order->id }}{{ $phase }}');
+
+                    if(box.style.display === 'none')
+                    {
+                        box.style.display='block';
+                        arrow.innerHTML='▽';
+                    }
+                    else
+                    {
+                        box.style.display='none';
+                        arrow.innerHTML='▷';
+                    }
+                "
                 style="
-                    padding:15px;
+                    padding:18px 20px;
                     cursor:pointer;
-                    font-weight:800;
-                    background:#f8fafc;
+                    font-weight:700;
+                    background:#f9fafb;
+                    display:flex;
+                    align-items:center;
+                    gap:10px;
+                    font-size:16px;
                 "
             >
-                {{ ucfirst($phase) }}
-            </summary>
 
-            <div style="padding:15px;">
+                <span id="artistArrow{{ $order->id }}{{ $phase }}">
+                    ▷
+                </span>
+
+                <span>
+                    {{ ucfirst($phase) }}
+                </span>
+
+            </div>
+
+            <div
+                id="artistPhase{{ $order->id }}{{ $phase }}"
+                style="display:none;"
+            >
 
                 @foreach($phaseProgresses as $progress)
 
-                <details
+                <div
                     style="
-                        border:1px solid #e5e7eb;
-                        border-radius:12px;
-                        margin-bottom:10px;
+                        padding:20px;
+                        border-top:1px solid #eee;
                     "
                 >
-                    <summary
+
+                    <div
                         style="
-                            padding:12px;
-                            cursor:pointer;
+                            margin-bottom:10px;
                             font-weight:700;
                         "
                     >
 
-                        {{ ucfirst($phase) }}
-
                         @if($progress->status == 'accepted')
+
                             <span style="color:#16a34a;">
-                                (Approved)
+                                Approved
                             </span>
-                        @elseif($progress->status == 'rejected')
-                            <span style="color:#dc2626;">
-                                (Revision Requested)
-                            </span>
-                        @else
+
+                        @elseif($progress->status == 'pending')
+
                             <span style="color:#ca8a04;">
-                                (Pending Review)
+                                Pending Review
                             </span>
-                        @endif
 
-                    </summary>
+                        @elseif($progress->status == 'rejected')
 
-                    <div style="padding:15px;">
+                            <span style="color:#dc2626;">
+                                Revision Requested
+                            </span>
 
-                        <img
-                            src="{{ asset('storage/'.$progress->image) }}"
-                            style="
-                                width:100%;
-                                max-height:350px;
-                                object-fit:contain;
-                                border-radius:12px;
-                                margin-bottom:10px;
-                            "
-                        >
-
-                        @if($progress->artist_note)
-                        <div
-                            style="
-                                background:#f9fafb;
-                                padding:10px;
-                                border-radius:10px;
-                                margin-bottom:10px;
-                            "
-                        >
-                            <strong>Artist Note:</strong><br>
-                            {{ $progress->artist_note }}
-                        </div>
-                        @endif
-
-                        @if($progress->customer_note)
-                        <div
-                            style="
-                                background:#fef2f2;
-                                padding:10px;
-                                border-radius:10px;
-                            "
-                        >
-                            <strong>Revision Note:</strong><br>
-                            {{ $progress->customer_note }}
-                        </div>
                         @endif
 
                     </div>
 
-                </details>
+                    <img
+                        src="{{ asset('storage/'.$progress->image) }}"
+                        style="
+                            width:100%;
+                            max-width:700px;
+                            border-radius:12px;
+                            margin-bottom:15px;
+                        "
+                    >
+
+                    @if($progress->artist_note)
+
+                        <p>
+                            <strong>Artist Note:</strong>
+                        </p>
+
+                        <p>
+                            {{ $progress->artist_note }}
+                        </p>
+
+                    @endif
+
+                    @if($progress->customer_note)
+
+                        <div
+                            style="
+                                margin-top:10px;
+                                padding:12px;
+                                background:#f3f4f6;
+                                border-radius:10px;
+                            "
+                        >
+
+                            <strong>Revision Note:</strong><br>
+
+                            {{ $progress->customer_note }}
+
+                        </div>
+
+                    @endif
+
+                </div>
 
                 @endforeach
 
             </div>
 
-        </details>
+        </div>
 
         @endforeach
 
