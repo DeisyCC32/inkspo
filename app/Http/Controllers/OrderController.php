@@ -42,8 +42,8 @@ class OrderController extends Controller
             Auth::id()
         );
 
-        if ($request->status) {
-
+        if ($request->status)
+        {
             $query->where(
                 'status',
                 $request->status
@@ -51,6 +51,10 @@ class OrderController extends Controller
         }
 
         $orders = $query
+            ->with([
+                'service.user',
+                'progresses'
+            ])
             ->latest()
             ->get();
 

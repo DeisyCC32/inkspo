@@ -30,4 +30,8 @@ class Order extends Model
     {
         return $this->belongsTo(Service::class);
     }
+    public function progresses()
+    {
+        return $this->hasMany(OrderProgress::class);
+    }
 }

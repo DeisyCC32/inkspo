@@ -51,6 +51,7 @@
 
                 </a>
 
+
                 {{-- MENU --}}
                 <div
                     style="
@@ -148,28 +149,33 @@
 
                     <x-slot name="content">
 
-                        <x-dropdown-link
-                            :href="route('profile.edit')"
+                        <a
+                            href="{{ route('profile.edit') }}"
+                            style="
+                                display:block;
+                                padding:10px 15px;
+                            "
                         >
                             Profile
-                        </x-dropdown-link>
+                        </a>
 
-                        <form
-                            method="POST"
-                            action="{{ route('logout') }}"
-                        >
-
+                        <form method="POST" action="{{ route('logout') }}">
                             @csrf
 
-                            <x-dropdown-link
-                                :href="route('logout')"
-                                onclick="
-                                    event.preventDefault();
-                                    this.closest('form').submit();
+                            <button
+                                type="submit"
+                                style="
+                                    width:100%;
+                                    text-align:left;
+                                    padding:10px 15px;
+                                    color:red;
+                                    background:none;
+                                    border:none;
+                                    cursor:pointer;
                                 "
                             >
                                 Log Out
-                            </x-dropdown-link>
+                            </button>
 
                         </form>
 

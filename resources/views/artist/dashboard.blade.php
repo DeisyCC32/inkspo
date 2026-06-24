@@ -1,5 +1,4 @@
 <x-app-layout>
-
 <div class="p-6">
 
     {{-- TITLE --}}
@@ -307,6 +306,9 @@
                         </button>
 
                     </form>
+
+                    
+
                             </form>
 
                         </div>
@@ -475,6 +477,112 @@
                         ">
                         Final Artwork
                     </p>
+
+                    @if($order->progresses->count())
+
+                    <hr style="margin:30px 0;">
+
+                    <h3
+                        style="
+                            font-size:24px;
+                            font-weight:900;
+                            margin-bottom:20px;
+                        ">
+                        Progress History
+                    </h3>
+
+                    @foreach(
+                        $order->progresses
+                            ->sortBy('created_at')
+                        as $progress
+                    )
+
+                    <div
+                        style="
+                            border:1px solid #e5e7eb;
+                            border-radius:20px;
+                            padding:20px;
+                            margin-bottom:20px;
+                            background:#fafafa;
+                        ">
+
+                        <div
+                            style="
+                                display:flex;
+                                justify-content:space-between;
+                                align-items:center;
+                                margin-bottom:15px;
+                            ">
+
+                            <strong>
+                                {{ ucfirst($progress->phase) }}
+                            </strong>
+
+                            @if($progress->status == 'pending')
+
+                                <span
+                                    style="
+                                        color:#ca8a04;
+                                        font-weight:800;
+                                    ">
+                                    Pending Review
+                                </span>
+
+                            @elseif($progress->status == 'accepted')
+
+                                <span
+                                    style="
+                                        color:#16a34a;
+                                        font-weight:800;
+                                    ">
+                                    Approved
+                                </span>
+
+                            @else
+
+                                <span
+                                    style="
+                                        color:#dc2626;
+                                        font-weight:800;
+                                    ">
+                                    Revision Requested
+                                </span>
+
+                            @endif
+
+                        </div>
+
+                        <img
+                            src="{{ asset('storage/'.$progress->image) }}"
+                            style="
+                                width:100%;
+                                max-width:700px;
+                                max-height:450px;
+                                object-fit:contain;
+                                border-radius:15px;
+                                background:#fff;
+                                border:1px solid #ddd;
+                                margin-bottom:15px;
+                            ">
+
+                        @if($progress->artist_note)
+
+                            <p>
+                                <strong>Artist Note:</strong>
+                            </p>
+
+                            <p>
+                                {{ $progress->artist_note }}
+                            </p>
+
+                        @endif
+
+                    </div>
+
+                    @endforeach
+
+                    @endif
+
                     @if($order->result_image)
 
                         <img
@@ -612,6 +720,132 @@
                         Rp {{ number_format($order->service->price,0,',','.') }}
                     </p>
 
+                    <div
+
+                        @php
+
+                        $approvedCount =
+                            $order->progresses
+                                ->where('status','accepted')
+                                ->count();
+
+                        @endphp
+
+                        
+                        <div 
+                        onclick="document.getElementById('progressModal{{ $order->id }}').style.display='flex'"
+                        style="
+                            margin:20px 0;
+                            cursor:pointer;
+                        ">
+
+                        <p
+                            style="
+                                color:#000500;
+                                font-weight:700;
+                                margin-bottom:15px;
+                            ">
+                            Progress (Click here to submit your progress)
+                        </p>
+
+                        <div
+                            style="
+                                width:100%;
+                                padding:0 10px;
+                            ">
+
+                            <div
+                                style="
+                                    display:flex;
+                                    justify-content:space-between;
+                                    align-items:center;
+                                    position:relative;
+                                    margin-bottom:10px;
+                                ">
+
+                                <div
+                                    style="
+                                        position:absolute;
+                                        left:0;
+                                        right:0;
+                                        height:4px;
+                                        background:#d1d5db;
+                                        top:50%;
+                                        transform:translateY(-50%);
+                                        z-index:1;
+                                    ">
+                                </div>
+
+                                <div
+                                    style="
+                                        position:absolute;
+                                        left:0;
+                                        top:50%;
+                                        transform:translateY(-50%);
+                                        height:4px;
+                                        background:#2c7efa;
+                                        z-index:1;
+
+                                        width:
+                                        {{
+                                            $approvedCount == 0 ? '0%' :
+                                            ($approvedCount == 1 ? '33%' :
+                                            ($approvedCount == 2 ? '66%' :
+                                            '100%'))
+                                        }};
+                                    ">
+                                </div>
+        
+
+                                @php
+
+                                $currentStep = $approvedCount + 1;
+
+                                if($currentStep > 4)
+                                {
+                                    $currentStep = 4;
+                                }
+
+                                @endphp
+
+                                @for($i = 1; $i <= 4; $i++)
+
+                                <div
+                                    style="
+                                        width:24px;
+                                        height:24px;
+                                        border-radius:999px;
+                                        z-index:2;
+
+                                        {{ $i <= $currentStep
+                                            ? 'background:#2c7efa;'
+                                            : 'border:4px solid #9ca3af;background:white;' }}
+                                    ">
+                                </div>
+
+                                @endfor
+                            </div>
+
+                            <div
+                                style="
+                                    display:flex;
+                                    justify-content:space-between;
+                                    font-size:13px;
+                                    font-weight:700;
+                                    color:#374151;
+                                ">
+
+                                <span>Sketch</span>
+                                <span>Lineart</span>
+                                <span>Render</span>
+                                <span>Finish</span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    
                     <p
                         style="
                             color:#000500;
@@ -795,11 +1029,344 @@
 
                         </button>
 
-                    </form>
+</form>
 
-                </div>
+{{-- PROGRESS MODAL --}}
+<div
+    id="progressModal{{ $order->id }}"
+    style="
+        display:none;
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,.75);
+        z-index:99999;
+        justify-content:center;
+        align-items:center;
+    ">
 
-            @empty
+    <div
+        style="
+            width:850px;
+            max-width:95%;
+            background:white;
+            border-radius:30px;
+            padding:40px;
+            max-height:90vh;
+            overflow-y:auto;
+        ">
+
+        <div
+            style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                margin-bottom:25px;
+            ">
+
+            <h2
+                style="
+                    font-size:32px;
+                    font-weight:900;
+                ">
+                Progress Tracking
+            </h2>
+
+            <button
+                type="button"
+                onclick="document.getElementById('progressModal{{ $order->id }}').style.display='none'"
+                style="
+                    border:none;
+                    background:none;
+                    font-size:28px;
+                    cursor:pointer;
+                ">
+                ✕
+            </button>
+
+        </div>
+
+        @if($order->progresses->count())
+
+        <hr style="margin:20px 0;">
+
+        <h3
+            style="
+                font-size:22px;
+                font-weight:900;
+                margin-bottom:20px;
+            "
+        >
+            Progress History
+        </h3>
+
+        @php
+        $groupedProgress =
+            $order->progresses
+                ->sortBy('created_at')
+                ->groupBy('phase');
+        @endphp
+
+        @foreach($groupedProgress as $phase => $phaseProgresses)
+
+        <details
+            style="
+                border:1px solid #e5e7eb;
+                border-radius:15px;
+                margin-bottom:15px;
+                overflow:hidden;
+            "
+        >
+            <summary
+                style="
+                    padding:15px;
+                    cursor:pointer;
+                    font-weight:800;
+                    background:#f8fafc;
+                "
+            >
+                {{ ucfirst($phase) }}
+            </summary>
+
+            <div style="padding:15px;">
+
+                @foreach($phaseProgresses as $progress)
+
+                <details
+                    style="
+                        border:1px solid #e5e7eb;
+                        border-radius:12px;
+                        margin-bottom:10px;
+                    "
+                >
+                    <summary
+                        style="
+                            padding:12px;
+                            cursor:pointer;
+                            font-weight:700;
+                        "
+                    >
+
+                        {{ ucfirst($phase) }}
+
+                        @if($progress->status == 'accepted')
+                            <span style="color:#16a34a;">
+                                (Approved)
+                            </span>
+                        @elseif($progress->status == 'rejected')
+                            <span style="color:#dc2626;">
+                                (Revision Requested)
+                            </span>
+                        @else
+                            <span style="color:#ca8a04;">
+                                (Pending Review)
+                            </span>
+                        @endif
+
+                    </summary>
+
+                    <div style="padding:15px;">
+
+                        <img
+                            src="{{ asset('storage/'.$progress->image) }}"
+                            style="
+                                width:100%;
+                                max-height:350px;
+                                object-fit:contain;
+                                border-radius:12px;
+                                margin-bottom:10px;
+                            "
+                        >
+
+                        @if($progress->artist_note)
+                        <div
+                            style="
+                                background:#f9fafb;
+                                padding:10px;
+                                border-radius:10px;
+                                margin-bottom:10px;
+                            "
+                        >
+                            <strong>Artist Note:</strong><br>
+                            {{ $progress->artist_note }}
+                        </div>
+                        @endif
+
+                        @if($progress->customer_note)
+                        <div
+                            style="
+                                background:#fef2f2;
+                                padding:10px;
+                                border-radius:10px;
+                            "
+                        >
+                            <strong>Revision Note:</strong><br>
+                            {{ $progress->customer_note }}
+                        </div>
+                        @endif
+
+                    </div>
+
+                </details>
+
+                @endforeach
+
+            </div>
+
+        </details>
+
+        @endforeach
+
+        @endif
+
+
+        <form
+            action="{{ route('progress.store',$order->id) }}"
+            method="POST"
+            enctype="multipart/form-data">
+
+            @csrf
+
+            <label
+                style="
+                    display:block;
+                    font-weight:700;
+                    margin-bottom:10px;
+                ">
+                Phase
+            </label>
+
+            @php
+
+                $lastApproved =
+                    $order->progresses
+                        ->where('status', 'accepted')
+                        ->sortByDesc('created_at')
+                        ->first();
+
+                $currentPhase = 'Sketch';
+
+                if ($lastApproved)
+                {
+                    if ($lastApproved->phase === 'sketch')
+                    {
+                        $currentPhase = 'Lineart';
+                    }
+                    elseif ($lastApproved->phase === 'lineart')
+                    {
+                        $currentPhase = 'Render';
+                    }
+                    elseif ($lastApproved->phase === 'render')
+                    {
+                        $currentPhase = 'Finish';
+                    }
+                }
+
+            @endphp
+
+            <div
+                style="
+                    background:#f3f4f6;
+                    padding:15px;
+                    border-radius:15px;
+                    margin-bottom:20px;
+                ">
+
+                <p
+                    style="
+                        font-size:12px;
+                        color:#6b7280;
+                        margin-bottom:5px;
+                    ">
+                    Current Phase
+                </p>
+
+                <p
+                    style="
+                        font-size:24px;
+                        font-weight:900;
+                    ">
+                    {{ $currentPhase }}
+                </p>
+
+            </div>
+
+            <label
+                style="
+                    display:block;
+                    font-weight:700;
+                    margin-bottom:10px;
+                ">
+                Upload Progress Image
+            </label>
+
+            <input
+                type="file"
+                name="image"
+                accept="image/*"
+                required
+                onchange="previewProgressImage(event, {{ $order->id }})"
+                style="
+                    margin-bottom:20px;
+                ">
+
+            <img
+                id="preview{{ $order->id }}"
+                style="
+                    display:none;
+                    width:100%;
+                    max-height:500px;
+                    object-fit:contain;
+                    background:#f8fafc;
+                    border-radius:20px;
+                    margin-bottom:20px;
+                ">
+
+            <label
+                style="
+                    display:block;
+                    font-weight:700;
+                    margin-bottom:10px;
+                ">
+                Artist Note
+            </label>
+
+            <textarea
+                name="artist_note"
+                rows="5"
+                style="
+                    width:100%;
+                    border:1px solid #ddd;
+                    border-radius:15px;
+                    padding:15px;
+                    margin-bottom:20px;
+                "
+                placeholder="Write progress note..."></textarea>
+
+            <button
+                type="submit"
+                style="
+                    background:#2563eb;
+                    color:white;
+                    border:none;
+                    padding:14px 30px;
+                    border-radius:15px;
+                    font-weight:700;
+                    cursor:pointer;
+                ">
+
+                Send {{ $currentPhase }}
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</div>
+
+@empty
 
                 <p style="color:white;">
                     No active orders.
@@ -1216,6 +1783,21 @@
 
 {{-- SCRIPT --}}
 <script>
+
+function previewProgressImage(event, orderId)
+{
+    const image =
+        document.getElementById(
+            'preview' + orderId
+        );
+
+    image.src =
+        URL.createObjectURL(
+            event.target.files[0]
+        );
+
+    image.style.display = 'block';
+}
 
 function showSection(id)
 {

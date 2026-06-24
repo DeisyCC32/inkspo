@@ -7,6 +7,7 @@ use App\Http\Controllers\MarketplaceController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ArtistOrderController;
+use App\Http\Controllers\OrderProgressController;
 
 Route::get(
     '/',
@@ -60,7 +61,7 @@ Route::patch('/orders/{order}/reject', [ArtistOrderController::class, 'reject'])
 Route::get('/my-orders', [OrderController::class, 'myOrders'])
     ->middleware('auth')
     ->name('orders.my');
-require __DIR__.'/auth.php';
+    
 
 Route::get(
     '/artist/{user}',
@@ -82,3 +83,23 @@ Route::post(
     '/orders/{order}/pay',
     [OrderController::class,'pay']
 )->name('orders.pay');
+
+Route::post(
+    '/orders/{order}/progress',
+    [OrderProgressController::class, 'store']
+)->middleware('auth')
+ ->name('progress.store');
+
+ Route::patch(
+    '/progress/{progress}/accept',
+    [OrderProgressController::class, 'accept']
+)->middleware('auth')
+ ->name('progress.accept');
+
+Route::patch(
+    '/progress/{progress}/reject',
+    [OrderProgressController::class, 'reject']
+)->middleware('auth')
+ ->name('progress.reject');
+
+ require __DIR__.'/auth.php';
